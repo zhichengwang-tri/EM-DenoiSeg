@@ -1,0 +1,116 @@
+NAME: 'unified_v2_a_m1' # pretrain: gaussion0.2 [method:dn]train: gaussion0.2 decoder denoise pretraining 
+
+TRAIN:
+    model_id: 52000
+    multi_scale: True
+    batch_size: 32
+    num_workers: 4
+    if_cuda: True
+    loss_func_dn: 'MSELoss'
+    loss_func_seg: 'WeightedBCELoss'
+    loss_func_cons: 'MSELoss'
+    weight_seg: 3
+    weight_dn: 1
+    weight_dn_final: 50
+    fushion_mode: 'denoised'
+    random_seed: 555
+    resume: False
+    resume_type: ddp
+    resume_path: '/model/ZCWANG007/jdas/unified-c'
+    if_valid: True
+    best_voi: 1.15
+    opt_type: 'adam'  # sgd
+    lr_mode: 'fixed'
+    min_valid: 0
+   
+    total_iters: 400000
+    warmup_iters: 0
+    base_lr: 0.0001
+    end_lr: 0.0001
+    display_freq: 100
+    show_freq: 1000
+    valid_freq: 1000
+    save_freq: 100000
+    decay_iters: 10000
+    weight_decay: ~
+    power: 0.9
+
+    loss_weights:
+        lambda_rest_first: 1
+        lambda_loss_clean: 1
+        lambda_loss_course: 1
+        lambda_loss_identity: 1
+    
+
+    cache_path: '/output/caches/'   # 
+    save_path: '/output/models/'    #  
+    record_path: '/output/logs/'    # 
+    valid_path: '/output/valid/'    # 
+   
+        
+time:     0
+
+VALID: 0
+
+
+DATA:
+    root_path : '/braindat/lab/chenyd/DATASET' # ../data, /data/weih527
+    data_name: 'CREMIA'
+    num_train: 75  
+    num_valid: 50
+    num_test: 50
+    padding: True
+    separate_weight: True
+    crop_size:
+        - 256
+        - 256
+    shifts:
+        - 1
+        - 3
+        - 5
+        - 9
+        - 15
+    neighbor: 4
+    strides: 
+        - 5
+        - 5
+    noiseL: 50
+    noise_type: 'G0.2'
+    blind: False
+    mask: False
+    mask_ratio: 0.0
+ 
+MODEL:
+    input_nc: 1
+    output_nc: 1
+    if_sigmoid: False
+    emd: 16
+    filters: 
+        - 16
+        - 32
+        - 64
+        - 128
+        - 256
+    finetuning: False
+    
+    MODEL_uni:
+        model_type: 'unet2d'  # '
+        input_nc: 1
+        output_nc: 10
+        if_sigmoid: True
+        filters: 
+            - 16
+            - 32
+            - 64
+            - 128
+            - 256
+    MODEL_denoise:
+        model_type: 'unet-multi'
+        input_nc: 1
+        output_nc: 1
+        if_sigmoid: False
+
+
+TEST:
+    pad: 15
+    model_name: ''
